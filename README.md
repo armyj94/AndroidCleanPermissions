@@ -1,1 +1,1 @@
-# AndroiClanPermissions
+# AndroidCleanPermissions
