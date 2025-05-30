@@ -4,8 +4,8 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.armandodarienzo.composecleanpermissions.domain.base.Result
 import com.armandodarienzo.composecleanpermissions.domain.bluetooth.GetPairedDevicesUseCase
-import com.netgroupemea.asianapoli.truckcompanion.ui.BaseViewModel
-import com.netgroupemea.asianapoli.truckcompanion.ui.PermissionReducer
+import com.armandodarienzo.composecleanpermissions.ui.base.BaseViewModel
+import com.armandodarienzo.composecleanpermissions.ui.permissions.PermissionReducer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

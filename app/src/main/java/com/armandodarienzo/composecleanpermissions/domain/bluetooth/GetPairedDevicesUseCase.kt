@@ -2,7 +2,7 @@ package com.armandodarienzo.composecleanpermissions.domain.bluetooth
 
 import com.armandodarienzo.composecleanpermissions.domain.base.DataResult
 import com.armandodarienzo.composecleanpermissions.domain.base.Result
-import com.netgroupemea.asianapoli.truckcompanion.domain.usecases.base.UseCase
+import com.armandodarienzo.composecleanpermissions.domain.base.UseCase
 import kotlinx.coroutines.CoroutineDispatcher
 
 class GetPairedDevicesUseCase (

@@ -1,7 +1,5 @@
 package com.armandodarienzo.composecleanpermissions.ui.base
 
-import com.netgroupemea.asianapoli.truckcompanion.ui.Reducer
-
 /**
  * Time capsule interface which serves as a holder for the different states a screen will have
  * during its lifetime.

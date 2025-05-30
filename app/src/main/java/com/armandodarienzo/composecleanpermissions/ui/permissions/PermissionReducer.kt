@@ -1,6 +1,7 @@
-package com.netgroupemea.asianapoli.truckcompanion.ui
+package com.armandodarienzo.composecleanpermissions.ui.permissions
 
 import androidx.compose.runtime.Immutable
+import com.armandodarienzo.composecleanpermissions.ui.base.Reducer
 
 class PermissionReducer :
     Reducer<PermissionReducer.PermissionViewState, PermissionReducer.PermissionEvent, PermissionReducer.PermissionEffect> {

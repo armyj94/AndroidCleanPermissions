@@ -25,7 +25,7 @@ import androidx.lifecycle.viewModelScope
 import com.armandodarienzo.composecleanpermissions.ui.base.rememberFlowWithLifecycle
 import com.armandodarienzo.composecleanpermissions.ui.permissions.PermissionRationaleDialog
 import com.armandodarienzo.composecleanpermissions.ui.permissions.PermissionsPermanentlyDeniedDialog
-import com.netgroupemea.asianapoli.truckcompanion.ui.PermissionReducer
+import com.armandodarienzo.composecleanpermissions.ui.permissions.PermissionReducer
 
 @Composable
 fun MainScreen(

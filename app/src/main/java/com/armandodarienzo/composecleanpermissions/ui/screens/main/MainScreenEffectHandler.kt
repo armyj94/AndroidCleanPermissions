@@ -7,7 +7,7 @@ import androidx.core.app.ActivityCompat
 import com.armandodarienzo.composecleanpermissions.ui.base.findActivity
 import com.armandodarienzo.composecleanpermissions.ui.base.goToPermissionSettings
 import com.armandodarienzo.composecleanpermissions.ui.permissions.rememberPermissionLauncherWithCallbacks
-import com.netgroupemea.asianapoli.truckcompanion.ui.PermissionReducer
+import com.armandodarienzo.composecleanpermissions.ui.permissions.PermissionReducer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 

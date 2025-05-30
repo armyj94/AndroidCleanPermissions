@@ -2,8 +2,8 @@ package com.armandodarienzo.composecleanpermissions.ui.screens.main
 
 import androidx.compose.runtime.Immutable
 import com.armandodarienzo.composecleanpermissions.domain.bluetooth.PairedDevice
-import com.netgroupemea.asianapoli.truckcompanion.ui.PermissionReducer
-import com.netgroupemea.asianapoli.truckcompanion.ui.Reducer
+import com.armandodarienzo.composecleanpermissions.ui.permissions.PermissionReducer
+import com.armandodarienzo.composecleanpermissions.ui.base.Reducer
 
 class MainScreenReducer:
     Reducer<MainScreenReducer.MainScreenState, MainScreenReducer.Event, MainScreenReducer.Effect> {

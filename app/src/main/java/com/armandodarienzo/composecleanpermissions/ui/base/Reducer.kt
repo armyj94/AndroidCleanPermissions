@@ -1,4 +1,4 @@
-package com.netgroupemea.asianapoli.truckcompanion.ui
+package com.armandodarienzo.composecleanpermissions.ui.base
 
 interface Reducer<State : Reducer.ViewState, Event : Reducer.ViewEvent, Effect : Reducer.ViewEffect> {
     interface ViewState

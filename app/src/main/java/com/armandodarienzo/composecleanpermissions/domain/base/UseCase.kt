@@ -1,8 +1,6 @@
-package com.netgroupemea.asianapoli.truckcompanion.domain.usecases.base
+package com.armandodarienzo.composecleanpermissions.domain.base
 
 import android.util.Log
-import com.armandodarienzo.composecleanpermissions.domain.base.Result
-import com.armandodarienzo.composecleanpermissions.domain.base.mapToAppError
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
