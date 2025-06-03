@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.armandodarienzo.composecleanpermissions.domain.base.Result
 import com.armandodarienzo.composecleanpermissions.domain.bluetooth.GetPairedDevicesUseCase
 import com.armandodarienzo.composecleanpermissions.ui.base.BaseViewModel
-import com.armandodarienzo.composecleanpermissions.ui.permissions.PermissionReducer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -13,31 +12,49 @@ import javax.inject.Inject
 @HiltViewModel
 class MainScreenViewModel @Inject constructor(
     private val getPairedDevices: GetPairedDevicesUseCase,
-) : BaseViewModel<MainScreenReducer.MainScreenState, MainScreenReducer.Event, MainScreenReducer.Effect>(
+) :  BaseViewModel<MainScreenViewModel.MainScreenAction, MainScreenReducer.MainScreenState,
+        MainScreenReducer.Event, MainScreenReducer.Effect> (
     initialState = MainScreenReducer.MainScreenState.initial(),
     reducer = MainScreenReducer()
 ) {
 
-    fun onConnectClick() {
+
+    sealed class MainScreenAction : Action {
+        // --- Complex Actions (Require logic in the Processor) ---
+        data object ConnectClicked : MainScreenAction()
+
+        // --- Simple Actions (Directly map to an Event via the interface) ---
+        data object DismissDialog : MainScreenAction()
+    }
+
+    override fun processAction(action: MainScreenAction) {
+        when (action) {
+            MainScreenAction.ConnectClicked -> onConnectClick()
+            MainScreenAction.DismissDialog -> sendEvent(MainScreenReducer.Event.DismissDialog)
+        }
+    }
+
+    private fun onConnectClick() {
         viewModelScope.launch {
 
             when (val op = getPairedDevices(Unit)) {
-                is Result.BusinessRuleError -> when(op.error) {
+                is Result.BusinessRuleError -> when(val error = op.error) {
                     GetPairedDevicesUseCase.GetPairedDevicesError.NoDevicesFound ->
                         sendEvent(MainScreenReducer.Event.ShowDialogError("No devices found"))
 
                     GetPairedDevicesUseCase.GetPairedDevicesError.BluetoothShutDown ->
                         sendEvent(MainScreenReducer.Event.ShowDialogError("Bluetooth is off"))
 
-                    is GetPairedDevicesUseCase.GetPairedDevicesError.MissingPermissions ->
-                        sendEventForEffect(
-                            MainScreenReducer.Event.Permission(
-                                PermissionReducer.PermissionEvent.StartPermissionRequest(
-                                    op.error.permissions,
-                                    ::onConnectClick
-                                )
+                    is GetPairedDevicesUseCase.GetPairedDevicesError.MissingPermissions -> {
+                        sendEffect(
+                            MainScreenReducer.Command.ExecuteWithPermissions(
+                                error.permissions,
+                                MainScreenAction.ConnectClicked,
+                                rationaleMessage = "These permissions are needed to search for " +
+                                        "and connect to OBD devices."
                             )
                         )
+                    }
                 }
                 is Result.Error -> {
                     //Properly log the error
@@ -52,5 +69,7 @@ class MainScreenViewModel @Inject constructor(
             }
         }
     }
+
+
 
 }
