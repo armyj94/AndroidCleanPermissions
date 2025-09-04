@@ -47,9 +47,9 @@ class MainScreenViewModel @Inject constructor(
 
                     is GetPairedDevicesUseCase.GetPairedDevicesError.MissingPermissions -> {
                         sendEffect(
-                            MainScreenReducer.Command.ExecuteWithPermissions(
-                                error.permissions,
-                                MainScreenAction.ConnectClicked,
+                            MainScreenReducer.MainScreenPermissionRequest(
+                                permissions = error.permissions,
+                                actionToExecute = MainScreenAction.ConnectClicked,
                                 rationaleMessage = "These permissions are needed to search for " +
                                         "and connect to OBD devices."
                             )

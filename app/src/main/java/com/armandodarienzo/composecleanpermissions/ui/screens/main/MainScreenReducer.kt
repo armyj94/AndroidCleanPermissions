@@ -36,20 +36,18 @@ class MainScreenReducer:
     }
 
     @Immutable
-    sealed class Effect : Reducer.ViewEffect
+    sealed class Effect : Reducer.SideEffect
 
-    sealed class UiEffect : Effect() {
-        data class ShowSuccessSnackBar(val successMessage: String) : UiEffect()
-        data class ShowErrorSnackbar(val errorMessage: String) : UiEffect()
+    sealed class ViewEffect : Effect() {
+        data class ShowSuccessSnackBar(val successMessage: String) : ViewEffect()
+        data class ShowErrorSnackbar(val errorMessage: String) : ViewEffect()
     }
 
-    sealed class Command : Effect() {
-        data class ExecuteWithPermissions(
-            override val permissions: List<String>,
-            override val actionToExecute: MainScreenViewModel.MainScreenAction,
-            override val rationaleMessage: String?
-        ) : Command(), PermissionRequest<MainScreenViewModel.MainScreenAction>
-    }
+    data class MainScreenPermissionRequest(
+        override val permissions: List<String>,
+        override val actionToExecute: MainScreenViewModel.MainScreenAction,
+        override val rationaleMessage: String?
+    ) : Effect(), PermissionRequest<MainScreenViewModel.MainScreenAction>
 
     override fun reduce(
         previousState: MainScreenState,

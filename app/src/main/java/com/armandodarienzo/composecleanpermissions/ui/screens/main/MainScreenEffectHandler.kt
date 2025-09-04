@@ -13,24 +13,22 @@ import kotlinx.coroutines.launch
 fun MainScreenEffectsHandler(
     effectFlow: Flow<MainScreenReducer.Effect>,
     scope: CoroutineScope,
-    sendEvent: (event: MainScreenReducer.Event) -> Unit,
-    sendEventForEffect: (event: MainScreenReducer.Event) -> Unit,
 ) {
     val context = LocalContext.current
 
     LaunchedEffect(effectFlow) {
         effectFlow
-            .filterIsInstance<MainScreenReducer.UiEffect>()
+            .filterIsInstance<MainScreenReducer.ViewEffect>()
             .collect { effect ->
                 when (effect) {
 
-                    is MainScreenReducer.UiEffect.ShowErrorSnackbar -> {
+                    is MainScreenReducer.ViewEffect.ShowErrorSnackbar -> {
                         scope.launch {
                             Toast.makeText(context, effect.errorMessage, Toast.LENGTH_SHORT).show()
                         }
                     }
 
-                    is MainScreenReducer.UiEffect.ShowSuccessSnackBar -> {
+                    is MainScreenReducer.ViewEffect.ShowSuccessSnackBar -> {
                         scope.launch {
                             Toast.makeText(context, effect.successMessage, Toast.LENGTH_SHORT).show()
                         }

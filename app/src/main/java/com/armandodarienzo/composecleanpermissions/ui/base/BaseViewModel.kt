@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 
-abstract class BaseViewModel<Action: BaseViewModel.Action, State : Reducer.ViewState, Event : Reducer.ViewEvent, Effect : Reducer.ViewEffect>(
+abstract class BaseViewModel<Action: BaseViewModel.Action, State : Reducer.ViewState, Event : Reducer.ViewEvent, Effect : Reducer.SideEffect>(
     initialState: State,
     private val reducer: Reducer<State, Event, Effect>
 ) : ViewModel() {

@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.filterIsInstance
 
 @Composable
 fun <A : BaseViewModel.Action> PermissionsManager(
-    effectFlow: Flow<Reducer.ViewEffect>,
+    effectFlow: Flow<Reducer.SideEffect>,
     sendAction: (A) -> Unit
 ) {
     val context = LocalContext.current
