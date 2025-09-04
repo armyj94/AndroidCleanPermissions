@@ -1,8 +1,8 @@
 package com.armandodarienzo.composecleanpermissions.ui.screens.main
 
 import androidx.compose.runtime.Immutable
+import com.armandodarienzo.composecleanpermissions.domain.base.PermissionRequest
 import com.armandodarienzo.composecleanpermissions.domain.bluetooth.PairedDevice
-import com.armandodarienzo.composecleanpermissions.ui.permissions.PermissionReducer
 import com.armandodarienzo.composecleanpermissions.ui.base.Reducer
 
 class MainScreenReducer:
@@ -13,7 +13,6 @@ class MainScreenReducer:
         val showDialog: Boolean,
         val pairedDevices: List<PairedDevice>,
         val dialogErrorMessage: String,
-        val permissionState: PermissionReducer.PermissionViewState
     ) : Reducer.ViewState {
 
         companion object{
@@ -22,7 +21,6 @@ class MainScreenReducer:
                     showDialog = false,
                     pairedDevices = emptyList(),
                     dialogErrorMessage = "",
-                    permissionState = PermissionReducer.PermissionViewState.initial()
                 )
             }
         }
@@ -34,15 +32,22 @@ class MainScreenReducer:
         data object DismissDialog : Event()
         data class UpdatePairedDevices(val pairedDevices: List<PairedDevice>): Event()
         data class ShowDialogError(val errorMessage: String) : Event()
-        data class Permission(val event: PermissionReducer.PermissionEvent) : Event()
+
     }
 
     @Immutable
-    sealed class Effect : Reducer.ViewEffect {
-        data class Permission(val effect: PermissionReducer.PermissionEffect) : Effect()
+    sealed class Effect : Reducer.SideEffect
+
+    sealed class ViewEffect : Effect() {
+        data class ShowSuccessSnackBar(val successMessage: String) : ViewEffect()
+        data class ShowErrorSnackbar(val errorMessage: String) : ViewEffect()
     }
 
-    private val permissionReducer = PermissionReducer()
+    data class MainScreenPermissionRequest(
+        override val permissions: List<String>,
+        override val actionToExecute: MainScreenViewModel.MainScreenAction,
+        override val rationaleMessage: String?
+    ) : Effect(), PermissionRequest<MainScreenViewModel.MainScreenAction>
 
     override fun reduce(
         previousState: MainScreenState,
@@ -73,17 +78,6 @@ class MainScreenReducer:
                     showDialog = true,
                     dialogErrorMessage = event.errorMessage
                 ) to null
-            }
-
-            is Event.Permission -> {
-
-                val (updatedPermissionState, permissionEffect) = permissionReducer.reduce(
-                    previousState.permissionState,
-                    event.event
-                )
-
-                val mainEffect = permissionEffect?.let { Effect.Permission(it) }
-                previousState.copy(permissionState = updatedPermissionState) to mainEffect
             }
         }
     }

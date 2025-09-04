@@ -2,7 +2,7 @@ package com.armandodarienzo.composecleanpermissions.ui.base
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -10,12 +10,11 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 
-abstract class BaseViewModel<State : Reducer.ViewState, Event : Reducer.ViewEvent, Effect : Reducer.ViewEffect>(
+abstract class BaseViewModel<Action: BaseViewModel.Action, State : Reducer.ViewState, Event : Reducer.ViewEvent, Effect : Reducer.SideEffect>(
     initialState: State,
     private val reducer: Reducer<State, Event, Effect>
 ) : ViewModel() {
@@ -32,12 +31,14 @@ abstract class BaseViewModel<State : Reducer.ViewState, Event : Reducer.ViewEven
         )
     }
 
-    private val _event: MutableSharedFlow<Event> = MutableSharedFlow()
-    val event: SharedFlow<Event>
-        get() = _event.asSharedFlow()
+    interface Action
 
-    private val _effects = Channel<Effect>(capacity = Channel.CONFLATED)
-    val effect = _effects.receiveAsFlow()
+    private val _effects = MutableSharedFlow<Effect>(
+        replay = 0,
+        extraBufferCapacity = 64,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val effect: SharedFlow<Effect> = _effects.asSharedFlow()
 
     val timeCapsule: TimeCapsule<State> = TimeTravelCapsule { storedState ->
         _state.tryEmit(storedState)
@@ -47,8 +48,10 @@ abstract class BaseViewModel<State : Reducer.ViewState, Event : Reducer.ViewEven
         timeCapsule.addState(initialState)
     }
 
+    abstract fun processAction(action: Action)
+
     fun sendEffect(effect: Effect) {
-        _effects.trySend(effect)
+        _effects.tryEmit(effect)
     }
 
     fun sendEvent(event: Event) {

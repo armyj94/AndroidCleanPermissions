@@ -23,9 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.armandodarienzo.composecleanpermissions.ui.base.rememberFlowWithLifecycle
-import com.armandodarienzo.composecleanpermissions.ui.permissions.PermissionRationaleDialog
-import com.armandodarienzo.composecleanpermissions.ui.permissions.PermissionsPermanentlyDeniedDialog
-import com.armandodarienzo.composecleanpermissions.ui.permissions.PermissionReducer
+import com.armandodarienzo.composecleanpermissions.ui.permissions.PermissionsManager
 
 @Composable
 fun MainScreen(
@@ -35,6 +33,11 @@ fun MainScreen(
 
     val state = viewModel.state.collectAsStateWithLifecycle()
     val effectFlow = rememberFlowWithLifecycle(viewModel.effect)
+
+    PermissionsManager(
+        effectFlow = effectFlow,
+        sendAction = viewModel::processAction,
+    )
 
     MainScreenEffectsHandler(
         effectFlow = effectFlow,
@@ -46,9 +49,7 @@ fun MainScreen(
     Content(
         modifier = modifier,
         state = state.value,
-        sendEvent = { event -> viewModel.sendEvent(event) },
-        sendEventForEffect = { event -> viewModel.sendEventForEffect(event) },
-        connectClick = { viewModel.onConnectClick() }
+        sendAction = { event -> viewModel.processAction(event) }
     )
 
 }
@@ -58,58 +59,10 @@ fun MainScreen(
 private fun Content(
     modifier: Modifier = Modifier,
     state: MainScreenReducer.MainScreenState,
-    sendEvent: (MainScreenReducer.Event) -> Unit = {},
-    sendEventForEffect: (MainScreenReducer.Event) -> Unit = {},
-    connectClick: () -> Unit = {},
-    ) {
+    sendAction: (MainScreenViewModel.MainScreenAction) -> Unit = {}
+) {
 
     with(state) {
-
-        PermissionRationaleDialog(
-            showDialog = permissionState.showRationaleDialog,
-            message = "These permissions are needed for a connection with the device",
-            onAskAgainClick = {
-                sendEventForEffect(
-                    MainScreenReducer.Event.Permission(
-                        PermissionReducer.PermissionEvent.HideRationaleDialog(
-                            true,
-                            permissionState.currentPermissionsRequested
-                        )
-                    )
-                )
-            },
-            onDismissClick = {
-                sendEvent(
-                    MainScreenReducer.Event.Permission(
-                        PermissionReducer.PermissionEvent.HideRationaleDialog(
-                            false,
-                            permissionState.currentPermissionsRequested
-                        )
-                    )
-                )
-            }
-        )
-
-        PermissionsPermanentlyDeniedDialog(
-            showDialog = permissionState.showDeniedDialog,
-            permanentlyDeniedPermissions = permissionState.currentPermissionsRequested,
-            onGoToSettingsClick = {
-                sendEventForEffect(
-                    MainScreenReducer.Event.Permission(
-                        PermissionReducer.PermissionEvent.HideDeniedDialog(true)
-                    )
-                )
-            },
-            onDismissClick = {
-                sendEvent(
-                    MainScreenReducer.Event.Permission(
-                        PermissionReducer.PermissionEvent.HideDeniedDialog(
-                            false
-                        )
-                    )
-                )
-            }
-        )
 
         if (showDialog) {
             AlertDialog(
@@ -117,7 +70,7 @@ private fun Content(
                     .height(600.dp)
                     .width(340.dp),
                 onDismissRequest = {
-                    sendEvent(MainScreenReducer.Event.DismissDialog)
+                    sendAction(MainScreenViewModel.MainScreenAction.DismissDialog)
                 },
                 title = { Text("Paired Bluetooth Devices") },
                 text = {
@@ -147,8 +100,7 @@ private fun Content(
                 },
                 confirmButton = {
                     TextButton(onClick = {
-                        // Direct call to sendEvent using the original logic
-                        sendEvent(MainScreenReducer.Event.DismissDialog)
+                        sendAction(MainScreenViewModel.MainScreenAction.DismissDialog)
                     }) {
                         Text("Close")
                     }
@@ -165,7 +117,7 @@ private fun Content(
         ) {
             Button(
                 onClick = {
-                    connectClick()
+                    sendAction(MainScreenViewModel.MainScreenAction.ConnectClicked)
                 },
                 enabled = true,
             ) {
