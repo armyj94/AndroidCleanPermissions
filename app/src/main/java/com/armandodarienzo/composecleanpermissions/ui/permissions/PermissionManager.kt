@@ -12,7 +12,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import com.armandodarienzo.composecleanpermissions.domain.base.PermissionRequest
-import com.armandodarienzo.composecleanpermissions.ui.base.BaseViewModel
+import com.armandodarienzo.composecleanpermissions.ui.base.MviProcessor
 import com.armandodarienzo.composecleanpermissions.ui.base.Reducer
 import com.armandodarienzo.composecleanpermissions.ui.base.findActivity
 import com.armandodarienzo.composecleanpermissions.ui.base.goToPermissionSettings
@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterIsInstance
 
 @Composable
-fun <A : BaseViewModel.Action> PermissionsManager(
+fun <A : MviProcessor.MviAction> PermissionsManager(
     effectFlow: Flow<Reducer.SideEffect>,
     sendAction: (A) -> Unit
 ) {
