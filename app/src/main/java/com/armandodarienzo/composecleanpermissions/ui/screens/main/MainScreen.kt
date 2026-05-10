@@ -42,8 +42,6 @@ fun MainScreen(
     MainScreenEffectsHandler(
         effectFlow = effectFlow,
         scope = viewModel.viewModelScope,
-        sendEvent = { event -> viewModel.sendEvent(event) },
-        sendEventForEffect = { event -> viewModel.sendEventForEffect(event) }
     )
 
     Content(
